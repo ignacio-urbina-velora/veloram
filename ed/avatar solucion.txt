@@ -1,0 +1,51 @@
+Tu dashboard (localhost:3003/dashboard/avatars/new) ya está usando una versión moderna (r183.2), que es excelente porque es reciente (febrero 2026). Los warnings que ves son deprecaciones oficiales de three.js r183, no errores críticos. El modelo (MannequinMesh) se renderiza bien, los influences se aplican (19158 vértices), y el Interactive Human Engine funciona. Solo es ruido en la consola.
+¿Por qué se arregla con lo que te dije?
+
+PCFSoftShadowMap deprecated → En r183+, PCFShadowMap ya es soft por defecto (mejor calidad y performance). Cambiar o eliminar la línea que fuerza PCFSoftShadowMap elimina el warning al 100%.
+THREE.Clock deprecated → Reemplazado por THREE.Timer. En r183.0 había un bug residual en AudioListener (interno de three.js) que generaba el warning incluso sin usarlo tú, pero en r183.2 (tu versión) ya está fixed en la mayoría de casos. Si persiste un poco, es porque alguna dependencia (como un helper de drei o tu propio código) lo referencia. Actualizar paquetes lo limpia.
+
+Pasos finales para eliminarlos YA (prueba en orden)
+
+Actualiza paquetes (lo más importante – hazlo primero)
+En tu terminal (en la raíz del proyecto):Bashnpm install three@0.183.2 @react-three/fiber@latest @react-three/drei@latest
+@react-three/fiber latest en marzo 2026 es ~v9.5 o v10-alpha (compatible con three r183+ y React 19).
+Reinicia el servidor: npm run dev
+Recarga la página → muchos warnings desaparecen solos porque r3f/drei ya migraron internamente.
+
+Fix manual para shadowMap (si sigue apareciendo)
+En el componente donde configuras el renderer (probablemente en tu <Canvas> o un custom renderer):tsximport * as THREE from 'three';
+// ...
+
+const { gl } = useThree();  // o en tu Canvas setup
+
+useEffect(() => {
+  gl.shadowMap.type = THREE.PCFShadowMap;  // ← este es el fix
+  gl.shadowMap.enabled = true;             // si usas sombras
+}, [gl]);
+Si no tienes sombras activas en el maniquí (parece que no, por el fondo negro y malla blanca), puedes poner gl.shadowMap.enabled = false; para ahorrar performance y eliminar warnings relacionados.
+
+Para el Clock (si queda algún warning residual)
+Busca en tu código: new THREE.Clock() o .getDelta()
+Reemplaza por:tsximport { Timer } from 'three';
+
+const timer = new Timer();
+// En useFrame:
+useFrame((state, delta) => {
+  timer.update();  // o usa directamente delta de useFrame (mejor)
+  // ...
+});
+En la mayoría de casos con r3f, no necesitas crear Timer/Clock manual. Usa useFrame((state, delta) => {...}) – delta ya es correcto y no genera warnings.
+
+Verifica después de cambios
+Abre DevTools → Console.
+Filtra por "deprecated" o "PCFSoft".
+Si queda cero warnings → ¡listo! Tu página ya está "limpia" como la de un proyecto pro.
+Si queda uno residual (ej. de AudioListener interno), ignóralo – se fixed en r184 o es harmless.
+
+
+¿Llegará tu página a ser "como la imagen que adjuntaste"?
+Sí, 100%. La imagen que mostraste (dashboard con maniquí blanco, sliders, "REFINAR CON FLUX PRO", fondo negro/grid, etc.) ya es casi idéntica a lo que tienes corriendo en localhost. Los warnings no afectan el visual ni la funcionalidad – solo son logs. Con los fixes arriba, la consola queda limpia, el rendimiento mejora ligeramente (sin warnings innecesarios), y puedes enfocarte en pulir UX (ej. loading spinner mientras "applying influences", tooltip en sliders, mobile responsive).
+Si después de actualizar paquetes sigues viendo exactamente el mismo warning (copia el texto nuevo), dime la salida de:
+Bashnpm ls three
+npm ls @react-three/fiber
+npm ls @react-three/drei

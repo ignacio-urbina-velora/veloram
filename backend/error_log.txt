@@ -1,0 +1,71 @@
+Traceback (most recent call last):
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\base.py", line 1136, in _commit_impl
+    self.engine.dialect.do_commit(self.connection)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\default.py", line 695, in do_commit
+    dbapi_connection.commit()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 271, in commit
+    self._handle_exception(error)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 298, in _handle_exception
+    raise error
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 269, in commit
+    self.await_(self._connection.commit())
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\aiosqlite\core.py", line 166, in commit
+    await self._execute(self._conn.commit)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\aiosqlite\core.py", line 133, in _execute
+    return await future
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\aiosqlite\core.py", line 106, in run
+    result = function()
+sqlite3.OperationalError: disk I/O error
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\user\.gemini\antigravity\scratch\ai-video-platform\backend\app\api\avatars.py", line 127, in generate_portrait
+    await db.commit()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\ext\asyncio\session.py", line 1011, in commit
+    await greenlet_spawn(self.sync_session.commit)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 200, in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\orm\session.py", line 1969, in commit
+    trans.commit(_to_root=True)
+  File "<string>", line 2, in commit
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\orm\state_changes.py", line 139, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\orm\session.py", line 1263, in commit
+    trans.commit()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\base.py", line 2620, in commit
+    self._do_commit()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\base.py", line 2725, in _do_commit
+    self._connection_commit_impl()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\base.py", line 2696, in _connection_commit_impl
+    self.connection._commit_impl()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\base.py", line 1138, in _commit_impl
+    self._handle_dbapi_exception(e, None, None, None, None)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\base.py", line 2344, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\base.py", line 1136, in _commit_impl
+    self.engine.dialect.do_commit(self.connection)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\engine\default.py", line 695, in do_commit
+    dbapi_connection.commit()
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 271, in commit
+    self._handle_exception(error)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 298, in _handle_exception
+    raise error
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\dialects\sqlite\aiosqlite.py", line 269, in commit
+    self.await_(self._connection.commit())
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 130, in await_only
+    return current.driver.switch(awaitable)  # type: ignore[no-any-return]
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\sqlalchemy\util\_concurrency_py3k.py", line 195, in greenlet_spawn
+    value = await result
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\aiosqlite\core.py", line 166, in commit
+    await self._execute(self._conn.commit)
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\aiosqlite\core.py", line 133, in _execute
+    return await future
+  File "C:\Users\user\AppData\Local\Programs\Python\Python310\lib\site-packages\aiosqlite\core.py", line 106, in run
+    result = function()
+sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) disk I/O error
+(Background on this error at: https://sqlalche.me/e/20/e3q8)

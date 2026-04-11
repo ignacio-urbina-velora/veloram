@@ -1,0 +1,281 @@
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Traceback (most recent call last):
+Runner failed with exception: ImportError('libGL.so.1: cannot open shared object file: No such file or directory')
+  File "/pkg/modal/_runtime/container_io_manager.py", line 906, in handle_user_exception
+    yield
+  File "/pkg/modal/_runtime/user_code_imports.py", line 63, in call_lifecycle_functions
+    res = func(*args)
+  File "/root/modal_app.py", line 77, in setup
+    from ultralytics import YOLO
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/__init__.py", line 13, in <module>
+    from ultralytics.utils import ASSETS, SETTINGS
+  File "/usr/local/lib/python3.10/site-packages/ultralytics/utils/__init__.py", line 24, in <module>
+    import cv2
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 181, in <module>
+    bootstrap()
+  File "/usr/local/lib/python3.10/site-packages/cv2/__init__.py", line 153, in bootstrap
+    native_module = importlib.import_module("cv2")
+  File "/usr/local/lib/python3.10/importlib/__init__.py", line 126, in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+
+Task's current input(s) ["in-01KNR89JTADQ9K00JHB3GDE9HC:1775709244235-0"] cancelled because: Task's current input in-01KNR89JTADQ9K00JHB3GDE9HC:1775709244235-0 hit its timeout of 600s
+    GET / -> 500 Internal Server Error  (duration: 2.41 s, execution: 599.2 s)
+[modal-client] 2026-04-09T04:44:07+0000 Received a cancellation signal while processing input ('in-01KNR89JTADQ9K00JHB3GDE9HC:1775709244235-0',)
+Traceback (most recent call last):
+  File "/root/modal_app.py", line 295, in generate_avatar_endpoint
+    image_b64 = generator.generate.remote(
+  File "/pkg/synchronicity/synchronizer.py", line 715, in proxy_method
+    return wrapped_method(instance, *args, **kwargs)
+  File "/pkg/synchronicity/combined_types.py", line 33, in __call__
+    raise uc_exc.exc
+  File "/pkg/modal/_object.py", line 46, in wrapped
+    return await method(self, *args, **kwargs)
+  File "/pkg/modal/_functions.py", line 1769, in remote
+    return await self._call_function(args, kwargs)
+  File "/pkg/modal/_functions.py", line 1713, in _call_function
+    return await invocation.run_function()
+  File "/pkg/modal/_functions.py", line 293, in run_function
+    return await _process_result(item.result, item.data_format, self.stub, self.client)
+  File "/pkg/modal/_utils/function_utils.py", line 529, in _process_result
+    raise RemoteError(result.exception)
+modal.exception.RemoteError: Parent input in-01KNR89JTADQ9K00JHB3GDE9HC failed

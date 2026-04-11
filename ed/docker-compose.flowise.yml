@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  flowise:
+    image: flowiseai/flowise:latest
+    container_name: flowise-director
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - FLOWISE_USERNAME=admin
+      - FLOWISE_PASSWORD=FlowiseAdmin2026
+      - DATABASE_PATH=/root/.flowise
+      - APIKEY_PATH=/root/.flowise
+      - SECRETKEY_PATH=/root/.flowise
+      - LOG_PATH=/root/.flowise/logs
+    volumes:
+      - flowise_data:/root/.flowise
+    networks:
+      - ai-video-net
+
+volumes:
+  flowise_data:
+
+
+networks:
+  ai-video-net:
+    driver: bridge

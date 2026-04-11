@@ -1,0 +1,34 @@
+
+--- mejora 2d.docx ---
+
+Lo que todavía falta (y es bastante)
+A pesar de las mejoras, el resultado sigue estando lejos del nivel del Instagram. La imagen que generas tiene un aspecto "bonito" pero todavía se siente digital / renderizado, no fotográfico real.
+Principales problemas que veo:
+ControlNet es débil o inexistente Estás confiando casi todo en el prompt textual. Flux necesita guía fuerte (Depth + Canny) para respetar estructura facial, poros reales y microdetalles.
+Falta de post-procesado fuerte No estás aplicando Face Restore (CodeFormer/GFPGAN) ni un buen detailer después de Flux. Esto es lo que realmente marca la diferencia entre "bueno" y "nivel Instagram".
+Negative prompt débil o genérico Esto permite que Flux siga metiendo artefactos o suavizando demasiado la piel.
+Captura / Referencia no optimizada Si estás partiendo de una imagen generada previamente o del maniquí, la calidad de la referencia inicial es clave.
+Lighting y composición todavía son genéricos.
+Mi recomendación concreta para dar el salto real
+Para llegar al nivel del ejemplo de Instagram, yo haría estos cambios obligatorios:
+Prompt mejorado (estructura que yo uso):
+text
+Ultra-realistic macro close-up portrait, photorealistic 8k, shot on Phase One XF IQ4 with 80mm lens, f/2.0, natural window light, extremely detailed skin texture with visible pores, subtle freckles, natural skin oils and peach fuzz, realistic skin imperfections, sharp focus on eyes, cinematic color grading, shot on film, masterpiece, best quality
+Negative prompt fuerte:
+text
+cartoon, illustration, painting, 3d render, cgi, plastic skin, barbie doll, smooth skin, blurry, low detail, deformed, bad anatomy, overexposed, underexposed, watermark, text, logo, artificial, rendered
+Configuración técnica recomendada (Flux.1 dev):
+Steps: 35–45
+Guidance Scale: 3.5 – 4.0
+ControlNet Depth: strength 0.75–0.85 (muy importante)
+ControlNet Canny: strength 0.5–0.6
+IP-Adapter-FaceID Plus: strength 0.85–0.95 (si quieres mantener la misma cara)
+Scheduler: Euler a o DPM++ 2M Karras
+Post-procesado obligatorio:
+Face Restore (CodeFormer o GFPGAN)
+ADetailer (para mejorar ojos, piel y poros)
+Upscale 2x o 4x con 4x-UltraSharp
+
+
+--- 2d_mejoras_2_0.docx ---
+

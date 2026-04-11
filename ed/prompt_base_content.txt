@@ -1,0 +1,174 @@
+Categoría
+Slider / Selector
+Valores recomendados (ejemplos)
+Cómo se usa en el prompt
+Etnia
+Selector
+Latino/Hispano, Asiática, Europea, Africana, Árabe, Mixta
+&quot;stunning [etnia] woman&quot;
+Color de piel
+Color picker + 8 presets
+Claro, Medio Claro, Medio, Oliva, Moreno, Oscuro
+&quot;warm olive skin tone&quot;
+Edad
+Slider 18–45
+18–45 (paso de 1)
+&quot;25 year old&quot;
+Forma de cara
+Selector
+Ovalada, Corazón, Cuadrada, Redonda, Diamante
+&quot;oval face shape&quot;
+Color de ojos
+Color picker + presets
+Azul, Verde, Marrón, Ámbar, Gris, Violeta
+&quot;with piercing [color] eyes&quot;
+Forma de ojos
+Selector
+Almendrados, Redondos, Felinos, Asiáticos
+&quot;almond-shaped eyes&quot;
+Cejas
+Grosor + Arco
+Delgadas, Medianas, Gruesas + Arco alto/bajo
+&quot;thick arched eyebrows&quot;
+Color de cabello
+Color picker
+Negro, Castaño, Rubio, Rojo, Plata, etc.
+&quot;[color] hair&quot;
+Largo de cabello
+Selector
+Corto (bob), Mediano (hombros), Largo (espalda)
+&quot;long silky hair&quot;
+Estilo de cabello
+Selector múltiple
+Liso, Ondulado, Rizado, Flequillo recto, Flequillo cortina, Cola, Trenza
+&quot;wavy hair with curtain bangs&quot;
+Labios
+Color + Volumen
+Natural, Rojo, Nude + Grosor (delgado/medio/grueso)
+&quot;full glossy lips&quot;
+Maquillaje
+Intensidad + Estilo
+Natural, Glam, Smokey, Sin maquillaje
+&quot;natural makeup look&quot;
+Expresión
+Selector
+Neutral, Seductora, Sonrisa sutil, Mirada intensa
+&quot;confident seductive expression&quot;
+Luz / Estilo
+Selector
+Suave natural, Cinematográfica, Golden hour, Dramática
+&quot;cinematic soft lighting&quot;
+&quot;
+2. Prompt base dinámico (el más importante)
+Este es el prompt que debes construir en build_avatar_prompt (actualiza tu modal_service.py):
+Python
+def
+ build_face_prompt
+(
+params
+: 
+dict
+) -&gt; 
+str
+:
+    return
+ f
+&quot;&quot;&quot;
+hyperrealistic close-up portrait of a stunning 
+{
+params[
+'age'
+]
+}
+ year old 
+{
+params[
+'etnia'
+]
+}
+ woman, 
+{
+params[
+'face_shape'
+]
+}
+ face shape, perfect symmetrical face, 
+detailed realistic skin with 
+{
+params[
+'skin_tone'
+]
+}
+ tone and natural glow, 
+sharp focus on 
+{
+params[
+'eye_color'
+]
+} {
+params[
+'eye_shape'
+]
+}
+ eyes with realistic iris reflections, 
+{
+params[
+'eyebrow_style'
+]
+}
+ eyebrows, 
+{
+params[
+'hair_color'
+]
+} {
+params[
+'hair_length'
+]
+} {
+params[
+'hair_style'
+]
+}
+ hair with 
+{
+params[
+'bangs'
+]
+}
+ bangs, 
+full 
+{
+params[
+'lip_volume'
+]
+}
+ lips with 
+{
+params[
+'lip_color'
+]
+}
+ gloss, 
+{
+params[
+'makeup'
+]
+}
+ makeup, 
+{
+params[
+'expression'
+]
+}
+, 
+flawless proportions, natural jawline, balanced facial features, 
+{
+params[
+'lighting'
+]
+}
+ lighting, photorealistic 8k, masterpiece, beauty photography style, 
+head and neck only, no body visible
+    &quot;&quot;&quot;
+.strip()

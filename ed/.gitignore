@@ -1,0 +1,65 @@
+# Node
+node_modules/
+.next/
+dist/
+build/
+
+# Python
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env.bak/
+venv.bak/
+
+# Next.js
+out/
+.vercel
+*.tsbuildinfo
+next-env.d.ts
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment variables (nunca subir credenciales reales)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Flowise (herramientas externas, no parte del proyecto core)
+flowise/
+flowise_final/
+flowise_new/
+
+# Archivos de prueba y debug de Blender/Modal (muy pesados, innecesarios)
+backend/test_addon.zip
+backend/test_b1.zip
+backend/test_v2.0.14.zip
+backend/test_download.zip
+backend/mpfb2.zip
+backend/test_output.glb
+
+# Bases de datos locales (se generan automáticamente)
+backend/*.db
+*.db
+
+# Archivos de debug/output generados temporalmente
+debug_output.png
+reproduction_output.png
+backend/error_log.txt
+backend/modal_logs.txt
+backend/full_modal_logs.txt
+
+# Storage local (imágenes/videos generados, pueden ser pesados)
+backend/storage/
+
+# Python path artifacts
+*.egg-info/
+.eggs/

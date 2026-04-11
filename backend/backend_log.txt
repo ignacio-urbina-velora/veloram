@@ -1,0 +1,64 @@
+INFO:     Will watch for changes in these directories: ['C:\\Users\\user\\.gemini\\antigravity\\scratch\\ai-video-platform\\backend']
+INFO:     Uvicorn running on http://127.0.0.1:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [19812] using WatchFiles
+INFO:     Started server process [17184]
+INFO:     Waiting for application startup.
+2026-03-21 12:24:18,904 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-21 12:24:18,905 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("users")
+2026-03-21 12:24:18,906 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,922 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("avatars")
+2026-03-21 12:24:18,922 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,926 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("projects")
+2026-03-21 12:24:18,926 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,929 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("shots")
+2026-03-21 12:24:18,929 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,934 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("jobs")
+2026-03-21 12:24:18,934 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,938 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("affiliates")
+2026-03-21 12:24:18,939 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,941 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("referrals")
+2026-03-21 12:24:18,943 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,946 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("transactions")
+2026-03-21 12:24:18,947 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,954 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("infrastructure_funds")
+2026-03-21 12:24:18,954 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,957 INFO sqlalchemy.engine.Engine PRAGMA main.table_info("infrastructure_logs")
+2026-03-21 12:24:18,957 INFO sqlalchemy.engine.Engine [raw sql] ()
+2026-03-21 12:24:18,961 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     Application startup complete.
+INFO:     127.0.0.1:53787 - "GET /health HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53819 - "OPTIONS /api/avatars/generate-portrait HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53819 - "POST /api/avatars/generate-portrait HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54352 - "OPTIONS /api/avatars/generate-portrait HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54352 - "POST /api/avatars/generate-portrait HTTP/1.1" 401 Unauthorized
+INFO:     127.0.0.1:54352 - "OPTIONS /api/auth/login HTTP/1.1" 200 OK
+2026-03-21 12:36:09,953 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-21 12:36:10,011 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.credits, users.is_admin, users.is_active, users.created_at, users.updated_at 
+FROM users 
+WHERE users.email = ?
+2026-03-21 12:36:10,011 INFO sqlalchemy.engine.Engine [generated in 0.00108s] ('ignaciourbina.96@gmail.com',)
+INFO:     127.0.0.1:54353 - "POST /api/auth/login HTTP/1.1" 200 OK
+2026-03-21 12:36:10,772 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:54353 - "OPTIONS /api/auth/me HTTP/1.1" 200 OK
+2026-03-21 12:36:13,347 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-21 12:36:13,349 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.credits, users.is_admin, users.is_active, users.created_at, users.updated_at 
+FROM users 
+WHERE users.id = ?
+2026-03-21 12:36:13,349 INFO sqlalchemy.engine.Engine [generated in 0.00054s] (2,)
+INFO:     127.0.0.1:54353 - "GET /api/auth/me HTTP/1.1" 200 OK
+2026-03-21 12:36:13,366 INFO sqlalchemy.engine.Engine COMMIT
+2026-03-21 12:36:38,651 INFO sqlalchemy.engine.Engine BEGIN (implicit)
+2026-03-21 12:36:38,655 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.credits, users.is_admin, users.is_active, users.created_at, users.updated_at 
+FROM users 
+WHERE users.id = ?
+2026-03-21 12:36:38,656 INFO sqlalchemy.engine.Engine [cached since 25.31s ago] (2,)
+2026-03-21 12:36:38,677 INFO sqlalchemy.engine.Engine SELECT users.id, users.email, users.username, users.hashed_password, users.credits, users.is_admin, users.is_active, users.created_at, users.updated_at 
+FROM users 
+WHERE users.id = ?
+2026-03-21 12:36:38,677 INFO sqlalchemy.engine.Engine [cached since 25.33s ago] (2,)
+2026-03-21 12:37:21,747 INFO sqlalchemy.engine.Engine UPDATE users SET credits=?, updated_at=? WHERE users.id = ?
+2026-03-21 12:37:21,748 INFO sqlalchemy.engine.Engine [generated in 0.00104s] (2310.0, '2026-03-21 15:37:21.747173', 2)
+2026-03-21 12:37:21,769 INFO sqlalchemy.engine.Engine COMMIT
+INFO:     127.0.0.1:54374 - "POST /api/avatars/generate-portrait HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app\services\modal_service.py'. Reloading...
+INFO:     Shutting down

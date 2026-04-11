@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+jspm_packages/
+web_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+ENV/
+.env
+
+# Logs and databases
+*.log
+*.sqlite
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+
+# Large assets (optional, but keep for now unless they cause push failure)
+# *.glb
+# *.bin

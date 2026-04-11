@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Avatar Editor — Amala</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #111; color: #eee; display: flex; height: 100vh; overflow: hidden; }
+
+  #viewport { flex: 1; position: relative; }
+  canvas { display: block; width: 100% !important; height: 100% !important; }
+
+  #sidebar {
+    width: 280px; background: #1a1a1a; border-left: 1px solid #2a2a2a;
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+
+  #sidebar-header {
+    padding: 16px; border-bottom: 1px solid #2a2a2a;
+    display: flex; align-items: center; gap: 10px;
+  }
+  #sidebar-header h1 { font-size: 15px; font-weight: 500; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: #4ade80; }
+
+  #tabs { display: flex; border-bottom: 1px solid #2a2a2a; }
+  .tab {
+    flex: 1; padding: 9px 0; font-size: 10px; text-align: center;
+    cursor: pointer; color: #666; border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+  }
+  .tab.active { color: #fff; border-bottom-color: #7c6af7; }
+
+  #panels { flex: 1; overflow-y: auto; padding: 12px; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .section { margin-bottom: 18px; }
+  .section-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+    color: #555; text-transform: uppercase; margin-bottom: 10px;
+  }
+
+  .slider-row { margin-bottom: 12px; }
+  .slider-info { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .slider-name { font-size: 12px; color: #aaa; }
+  .slider-val { font-size: 12px; font-weight: 500; color: #7c6af7; }
+  input[type=range] {
+    -webkit-appearance: none; width: 100%; height: 3px;
+    background: #2e2e2e; border-radius: 2px; outline: none;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 14px; height: 14px;
+    border-radius: 50%; background: #7c6af7; cursor: pointer;
+    border: 2px solid #1a1a1a;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 3px; border-radius: 2px;
+    background: linear-gradient(to right, #7c6af7 var(--val,50%), #2e2e2e var(--val,50%));
+  }
+
+  .color-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+  .color-btn {
+    width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent;
+    cursor: pointer; transition: border-color 0.15s;
+  }
+  .color-btn.active { border-color: #7c6af7; }
+
+  .skin-card {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 10px;
+    border: 1.5px solid #2a2a2a; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .skin-card:hover { background: #222; }
+  .skin-card.active { border-color: #7c6af7; background: #1e1a2e; }
+  .skin-swatch {
+    width: 36px; height: 36px; border-radius: 50%;
+    flex-shrink: 0; border: 2px solid rgba(255,255,255,0.08);
+  }
+  .skin-info { display: flex; flex-direction: column; gap: 2px; }
+  .skin-name { font-size: 12px; font-weight: 500; color: #ddd; }
+  .skin-sub  { font-size: 10px; color: #555; }
+
+  #loading-screen {
+    position: absolute; inset: 0; background: #111;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; z-index: 10;
+  }
+  #loading-screen h2 { font-size: 14px; color: #aaa; font-weight: 400; }
+  .progress-bar { width: 200px; height: 3px; background: #2a2a2a; border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #7c6af7; border-radius: 2px; transition: width 0.2s; width: 0%; }
+
+  #controls-bar {
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; background: rgba(0,0,0,0.6); padding: 8px 12px;
+    border-radius: 99px; backdrop-filter: blur(8px);
+  }
+  .ctrl-btn {
+    font-size: 11px; color: #aaa; cursor: pointer; padding: 4px 10px;
+    border-radius: 99px; border: 1px solid #333; background: transparent;
+    transition: all 0.15s;
+  }
+  .ctrl-btn:hover { background: #2a2a2a; color: #fff; }
+  .ctrl-btn.active { background: #7c6af7; border-color: #7c6af7; color: #fff; }
+
+  #error-msg { display: none; position: absolute; inset: 0; align-items: center; justify-content: center; flex-direction: column; gap: 12px; }
+  #error-msg p { color: #f87171; font-size: 13px; text-align: center; max-width: 280px; }
+
+  /* Hair & Outfit cards */
+  .style-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .style-card {
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    padding: 10px 6px; border-radius: 10px;
+    border: 1.5px solid #2a2a2a; cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    text-align: center;
+  }
+  .style-card:hover { background: #222; }
+  .style-card.active { border-color: #7c6af7; background: #1e1a2e; }
+  .style-icon { font-size: 28px; line-height: 1; }
+  .style-label { font-size: 11px; color: #ccc; font-weight: 500; }
+
+  .color-swatch-row { display: flex; gap: 7px; flex-wrap: wrap; margin-bottom: 12px; }
+  .cswatch {
+    width: 26px; height: 26px; border-radius: 50%;
+    border: 2px solid transparent; cursor: pointer;
+    transition: border-color 0.15s, transform 0.1s;
+  }
+  .cswatch:hover { transform: scale(1.15); }
+  .cswatch.active { border-color: #7c6af7; }
+</style>
+</head>
+<body>
+
+<div id="viewport">
+  <canvas id="c"></canvas>
+  <div id="loading-screen">
+    <svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="16" fill="none" stroke="#7c6af7" stroke-width="2" stroke-dasharray="80" stroke-dashoffset="80" style="animation:dash 1.2s linear infinite;transform-origin:center"><animateTransform attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="1s" repeatCount="indefinite"/></circle></svg>
+    <h2 id="loading-text">Cargando modelo...</h2>
+    <div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+  </div>
+  <div id="controls-bar">
+    <button class="ctrl-btn active" id="btn-rotate">Auto-rotar</button>
+    <button class="ctrl-btn" id="btn-front">Frente</button>
+    <button class="ctrl-btn" id="btn-side">Lateral</button>
+    <button class="ctrl-btn" id="btn-face">Rostro</button>
+    <button class="ctrl-btn" id="btn-wire">Wireframe</button>
+  </div>
+</div>
+
+<div id="sidebar">
+  <div id="sidebar-header">
+    <div class="dot"></div>
+    <h1>Avatar Editor</h1>
+  </div>
+  <div id="tabs">
+    <div class="tab active" data-panel="body">Cuerpo</div>
+    <div class="tab" data-panel="face">Rostro</div>
+    <div class="tab" data-panel="skin">Piel</div>
+    <div class="tab" data-panel="hair">Pelo</div>
+    <div class="tab" data-panel="outfit">Ropa</div>
+  </div>
+  <div id="panels">
+
+    <div class="panel active" id="panel-body">
+      <div class="section">
+        <div class="section-label">Proporciones</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Altura general</span><span class="slider-val" id="lbl-height">0%</span></div>
+          <input type="range" id="sl-height" min="-1" max="1" step="0.01" value="0" oninput="setMorph('height',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Altura (escala)</span><span class="slider-val" id="lbl-heightScale">0%</span></div>
+          <input type="range" id="sl-heightScale" min="0" max="1" step="0.01" value="0" oninput="setMorphDual('heightPos','heightNeg',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Cuerpo femenino</span><span class="slider-val" id="lbl-feminine">0%</span></div>
+          <input type="range" id="sl-feminine" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('feminine',this)">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Escala total</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Escala X (anchura)</span><span class="slider-val" id="lbl-sx">1.00</span></div>
+          <input type="range" id="sl-sx" min="0.6" max="1.4" step="0.01" value="1" oninput="setScale('x',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Escala Y (altura)</span><span class="slider-val" id="lbl-sy">1.00</span></div>
+          <input type="range" id="sl-sy" min="0.7" max="1.3" step="0.01" value="1" oninput="setScale('y',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Escala Z (profundidad)</span><span class="slider-val" id="lbl-sz">1.00</span></div>
+          <input type="range" id="sl-sz" min="0.6" max="1.4" step="0.01" value="1" oninput="setScale('z',this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-face">
+      <div class="section">
+        <div class="section-label">Cejas</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Altura ceja derecha</span><span class="slider-val" id="lbl-browR">0%</span></div>
+          <input type="range" id="sl-browR" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('browR',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Altura ceja izquierda</span><span class="slider-val" id="lbl-browL">0%</span></div>
+          <input type="range" id="sl-browL" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('browL',this)">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Ojos</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Posición ojo derecho</span><span class="slider-val" id="lbl-eyeR">0%</span></div>
+          <input type="range" id="sl-eyeR" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('eyeR',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Posición ojo izquierdo</span><span class="slider-val" id="lbl-eyeL">0%</span></div>
+          <input type="range" id="sl-eyeL" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('eyeL',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Párpado derecho</span><span class="slider-val" id="lbl-lidR">0%</span></div>
+          <input type="range" id="sl-lidR" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('lidR',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Párpado izquierdo</span><span class="slider-val" id="lbl-lidL">0%</span></div>
+          <input type="range" id="sl-lidL" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('lidL',this)">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Nariz</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Ala nariz derecha</span><span class="slider-val" id="lbl-noseWR">0%</span></div>
+          <input type="range" id="sl-noseWR" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('noseWR',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Ala nariz izquierda</span><span class="slider-val" id="lbl-noseWL">0%</span></div>
+          <input type="range" id="sl-noseWL" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('noseWL',this)">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Orejas</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Oreja derecha</span><span class="slider-val" id="lbl-earR">0%</span></div>
+          <input type="range" id="sl-earR" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('earR',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Oreja izquierda</span><span class="slider-val" id="lbl-earL">0%</span></div>
+          <input type="range" id="sl-earL" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('earL',this)">
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Pestañas</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Pestaña sup. exterior</span><span class="slider-val" id="lbl-lashOuter">0%</span></div>
+          <input type="range" id="sl-lashOuter" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('lashOuter',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Pestaña sup. uniforme</span><span class="slider-val" id="lbl-lashUpper">0%</span></div>
+          <input type="range" id="sl-lashUpper" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('lashUpper',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Pestaña inf. uniforme</span><span class="slider-val" id="lbl-lashLower">0%</span></div>
+          <input type="range" id="sl-lashLower" min="0" max="1" step="0.01" value="0" oninput="setMorphSingle('lashLower',this)">
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-skin">
+      <div class="section">
+        <div class="section-label">Tono de piel</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+
+          <div class="skin-card active" onclick="setSkinPreset(this)" data-skin="1"
+            data-color="#FDDCBE" data-rough="0.72" data-sheen="0.12" data-sheencolor="#ffd0b0">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#FEECD8,#F5CEAD)"></div>
+            <div class="skin-info">
+              <span class="skin-name">Muy claro</span>
+              <span class="skin-sub">Tono 1</span>
+            </div>
+          </div>
+
+          <div class="skin-card" onclick="setSkinPreset(this)" data-skin="2"
+            data-color="#E8B98A" data-rough="0.70" data-sheen="0.18" data-sheencolor="#e8a070">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#F0C89A,#D9A070)"></div>
+            <div class="skin-info">
+              <span class="skin-name">Claro</span>
+              <span class="skin-sub">Tono 2</span>
+            </div>
+          </div>
+
+          <div class="skin-card" onclick="setSkinPreset(this)" data-skin="3"
+            data-color="#C07A3A" data-rough="0.68" data-sheen="0.22" data-sheencolor="#c86830">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#CF8F4A,#AD6525)"></div>
+            <div class="skin-info">
+              <span class="skin-name">Medio</span>
+              <span class="skin-sub">Tono 3</span>
+            </div>
+          </div>
+
+          <div class="skin-card" onclick="setSkinPreset(this)" data-skin="4"
+            data-color="#8B4A1E" data-rough="0.66" data-sheen="0.26" data-sheencolor="#a04818">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#9E5A28,#76380E)"></div>
+            <div class="skin-info">
+              <span class="skin-name">Moreno</span>
+              <span class="skin-sub">Tono 4</span>
+            </div>
+          </div>
+
+          <div class="skin-card" onclick="setSkinPreset(this)" data-skin="5"
+            data-color="#5A2D12" data-rough="0.64" data-sheen="0.28" data-sheencolor="#7a2e10">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#6A381A,#4A2008)"></div>
+            <div class="skin-info">
+              <span class="skin-name">Oscuro</span>
+              <span class="skin-sub">Tono 5</span>
+            </div>
+          </div>
+
+          <div class="skin-card" onclick="setSkinPreset(this)" data-skin="6"
+            data-color="#2A1208" data-rough="0.60" data-sheen="0.32" data-sheencolor="#4a1e08">
+            <div class="skin-swatch" style="background:linear-gradient(135deg,#381A0A,#1C0A02)"></div>
+            <div class="skin-info">
+              <span class="skin-name">Muy oscuro</span>
+              <span class="skin-sub">Tono 6</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Materiales</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Roughness (piel)</span><span class="slider-val" id="lbl-rough">0.70</span></div>
+          <input type="range" id="sl-rough" min="0" max="1" step="0.01" value="0.7" oninput="setMaterial('roughness',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Metalness</span><span class="slider-val" id="lbl-metal">0.00</span></div>
+          <input type="range" id="sl-metal" min="0" max="1" step="0.01" value="0" oninput="setMaterial('metalness',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Intensidad ambiente</span><span class="slider-val" id="lbl-ambient">0.60</span></div>
+          <input type="range" id="sl-ambient" min="0" max="2" step="0.05" value="0.6" oninput="setAmbient(this)">
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Iluminación</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Luz principal</span><span class="slider-val" id="lbl-mainlight">1.00</span></div>
+          <input type="range" id="sl-mainlight" min="0" max="3" step="0.05" value="1" oninput="setLight(this)">
+        </div>
+      </div>
+    </div>
+
+    <!-- HAIR PANEL -->
+    <div class="panel" id="panel-hair">
+      <div class="section">
+        <div class="section-label">Estilo de pelo</div>
+        <div class="style-grid">
+          <div class="style-card active" onclick="setHairStyle('none',this)">
+            <div class="style-icon">🚫</div><div class="style-label">Sin pelo</div>
+          </div>
+          <div class="style-card" onclick="setHairStyle('short',this)">
+            <div class="style-icon">💇</div><div class="style-label">Corto</div>
+          </div>
+          <div class="style-card" onclick="setHairStyle('medium',this)">
+            <div class="style-icon">💆</div><div class="style-label">Medio</div>
+          </div>
+          <div class="style-card" onclick="setHairStyle('long',this)">
+            <div class="style-icon">👩</div><div class="style-label">Largo liso</div>
+          </div>
+          <div class="style-card" onclick="setHairStyle('curly',this)">
+            <div class="style-icon">🌀</div><div class="style-label">Rizado</div>
+          </div>
+          <div class="style-card" onclick="setHairStyle('afro',this)">
+            <div class="style-icon">✨</div><div class="style-label">Afro</div>
+          </div>
+          <div class="style-card" onclick="setHairStyle('ponytail',this)">
+            <div class="style-icon">🎀</div><div class="style-label">Coleta</div>
+          </div>
+          <div class="style-card" onclick="setHairStyle('bun',this)">
+            <div class="style-icon">🔵</div><div class="style-label">Moño</div>
+          </div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Color de pelo</div>
+        <div class="color-swatch-row">
+          <div class="cswatch active" style="background:#100500" onclick="setHairColor('#100500',this)"></div>
+          <div class="cswatch" style="background:#3b1f0a" onclick="setHairColor('#3b1f0a',this)"></div>
+          <div class="cswatch" style="background:#7b4a1a" onclick="setHairColor('#7b4a1a',this)"></div>
+          <div class="cswatch" style="background:#c27a30" onclick="setHairColor('#c27a30',this)"></div>
+          <div class="cswatch" style="background:#e8b84b" onclick="setHairColor('#e8b84b',this)"></div>
+          <div class="cswatch" style="background:#f5d78e" onclick="setHairColor('#f5d78e',this)"></div>
+          <div class="cswatch" style="background:#c0392b" onclick="setHairColor('#c0392b',this)"></div>
+          <div class="cswatch" style="background:#e8734a" onclick="setHairColor('#e8734a',this)"></div>
+          <div class="cswatch" style="background:#888888" onclick="setHairColor('#888888',this)"></div>
+          <div class="cswatch" style="background:#ffffff" onclick="setHairColor('#ffffff',this)"></div>
+          <div class="cswatch" style="background:#6c3abf" onclick="setHairColor('#6c3abf',this)"></div>
+          <div class="cswatch" style="background:#1a7abf" onclick="setHairColor('#1a7abf',this)"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Ajustes</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Longitud</span><span class="slider-val" id="lbl-hairlen">50%</span></div>
+          <input type="range" id="sl-hairlen" min="0" max="1" step="0.01" value="0.5" oninput="setHairParam('length',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Volumen</span><span class="slider-val" id="lbl-hairvol">50%</span></div>
+          <input type="range" id="sl-hairvol" min="0.5" max="2" step="0.01" value="1" oninput="setHairParam('volume',this)">
+        </div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Brillo</span><span class="slider-val" id="lbl-hairshine">30%</span></div>
+          <input type="range" id="sl-hairshine" min="0" max="1" step="0.01" value="0.3" oninput="setHairParam('shine',this)">
+        </div>
+      </div>
+    </div>
+
+    <!-- OUTFIT PANEL -->
+    <div class="panel" id="panel-outfit">
+      <div class="section">
+        <div class="section-label">Parte superior</div>
+        <div class="style-grid">
+          <div class="style-card active" onclick="setOutfitTop('none',this)">
+            <div class="style-icon">🚫</div><div class="style-label">Sin ropa</div>
+          </div>
+          <div class="style-card" onclick="setOutfitTop('tshirt',this)">
+            <div class="style-icon">👕</div><div class="style-label">Camiseta</div>
+          </div>
+          <div class="style-card" onclick="setOutfitTop('tank',this)">
+            <div class="style-icon">🩱</div><div class="style-label">Top</div>
+          </div>
+          <div class="style-card" onclick="setOutfitTop('jacket',this)">
+            <div class="style-icon">🧥</div><div class="style-label">Chaqueta</div>
+          </div>
+          <div class="style-card" onclick="setOutfitTop('hoodie',this)">
+            <div class="style-icon">🫷</div><div class="style-label">Sudadera</div>
+          </div>
+          <div class="style-card" onclick="setOutfitTop('dress',this)">
+            <div class="style-icon">👗</div><div class="style-label">Vestido</div>
+          </div>
+        </div>
+        <div class="section-label" style="margin-top:4px">Color superior</div>
+        <div class="color-swatch-row">
+          <div class="cswatch active" style="background:#1a1a2e" onclick="setOutfitColor('top','#1a1a2e',this)"></div>
+          <div class="cswatch" style="background:#2c3e6b" onclick="setOutfitColor('top','#2c3e6b',this)"></div>
+          <div class="cswatch" style="background:#c0392b" onclick="setOutfitColor('top','#c0392b',this)"></div>
+          <div class="cswatch" style="background:#27ae60" onclick="setOutfitColor('top','#27ae60',this)"></div>
+          <div class="cswatch" style="background:#f39c12" onclick="setOutfitColor('top','#f39c12',this)"></div>
+          <div class="cswatch" style="background:#8e44ad" onclick="setOutfitColor('top','#8e44ad',this)"></div>
+          <div class="cswatch" style="background:#e8e8e8" onclick="setOutfitColor('top','#e8e8e8',this)"></div>
+          <div class="cswatch" style="background:#222222" onclick="setOutfitColor('top','#222222',this)"></div>
+          <div class="cswatch" style="background:#e91e8c" onclick="setOutfitColor('top','#e91e8c',this)"></div>
+          <div class="cswatch" style="background:#00bcd4" onclick="setOutfitColor('top','#00bcd4',this)"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Parte inferior</div>
+        <div class="style-grid">
+          <div class="style-card active" onclick="setOutfitBottom('none',this)">
+            <div class="style-icon">🚫</div><div class="style-label">Sin ropa</div>
+          </div>
+          <div class="style-card" onclick="setOutfitBottom('pants',this)">
+            <div class="style-icon">👖</div><div class="style-label">Pantalón</div>
+          </div>
+          <div class="style-card" onclick="setOutfitBottom('shorts',this)">
+            <div class="style-icon">🩳</div><div class="style-label">Shorts</div>
+          </div>
+          <div class="style-card" onclick="setOutfitBottom('skirt',this)">
+            <div class="style-icon">👘</div><div class="style-label">Falda</div>
+          </div>
+          <div class="style-card" onclick="setOutfitBottom('leggings',this)">
+            <div class="style-icon">🦵</div><div class="style-label">Leggings</div>
+          </div>
+          <div class="style-card" onclick="setOutfitBottom('jeans',this)">
+            <div class="style-icon">🔵</div><div class="style-label">Jeans</div>
+          </div>
+        </div>
+        <div class="section-label" style="margin-top:4px">Color inferior</div>
+        <div class="color-swatch-row">
+          <div class="cswatch active" style="background:#1c3a6e" onclick="setOutfitColor('bottom','#1c3a6e',this)"></div>
+          <div class="cswatch" style="background:#111111" onclick="setOutfitColor('bottom','#111111',this)"></div>
+          <div class="cswatch" style="background:#555555" onclick="setOutfitColor('bottom','#555555',this)"></div>
+          <div class="cswatch" style="background:#8b4513" onclick="setOutfitColor('bottom','#8b4513',this)"></div>
+          <div class="cswatch" style="background:#c0392b" onclick="setOutfitColor('bottom','#c0392b',this)"></div>
+          <div class="cswatch" style="background:#27ae60" onclick="setOutfitColor('bottom','#27ae60',this)"></div>
+          <div class="cswatch" style="background:#f5f5f5" onclick="setOutfitColor('bottom','#f5f5f5',this)"></div>
+          <div class="cswatch" style="background:#e91e8c" onclick="setOutfitColor('bottom','#e91e8c',this)"></div>
+          <div class="cswatch" style="background:#8e44ad" onclick="setOutfitColor('bottom','#8e44ad',this)"></div>
+          <div class="cswatch" style="background:#00bcd4" onclick="setOutfitColor('bottom','#00bcd4',this)"></div>
+        </div>
+      </div>
+      <div class="section">
+        <div class="section-label">Ajuste de ropa</div>
+        <div class="slider-row">
+          <div class="slider-info"><span class="slider-name">Holgura</span><span class="slider-val" id="lbl-fitness">50%</span></div>
+          <input type="range" id="sl-fitness" min="0" max="1" step="0.01" value="0.5" oninput="setOutfitFit(this)">
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const canvas = document.getElementById('c');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: false });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.35;
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.physicallyCorrectLights = true;
+
+// Studio gradient background via CSS on canvas parent
+document.getElementById('viewport').style.background =
+  'radial-gradient(ellipse at 40% 30%, #2a2238 0%, #151520 55%, #0d0d10 100%)';
+
+const scene = new THREE.Scene();
+scene.background = null;
+
+const camera = new THREE.PerspectiveCamera(42, 1, 0.01, 100);
+camera.position.set(0, 1.55, 2.6);
+camera.lookAt(0, 1.0, 0);
+
+const controls = new OrbitControls(camera, canvas);
+controls.target.set(0, 1.0, 0);
+controls.enableDamping = true;
+controls.dampingFactor = 0.06;
+controls.minDistance = 0.4;
+controls.maxDistance = 6;
+controls.update();
+
+// === CINEMATIC 3-POINT LIGHTING ===
+// Key light — warm soft box from upper-left front
+const ambLight = new THREE.HemisphereLight(0xfff0e0, 0x334466, 1.2);
+scene.add(ambLight);
+window._ambLight = ambLight;
+
+const keyLight = new THREE.SpotLight(0xfff5e8, 5.0, 14, Math.PI / 5.5, 0.5, 1.2);
+keyLight.position.set(-1.2, 3.5, 2.8);
+keyLight.castShadow = true;
+keyLight.shadow.mapSize.set(2048, 2048);
+keyLight.shadow.camera.near = 0.5;
+keyLight.shadow.camera.far = 14;
+keyLight.shadow.bias = -0.0003;
+scene.add(keyLight);
+scene.add(keyLight.target);
+keyLight.target.position.set(0, 1.0, 0);
+window._keyLight = keyLight;
+
+// Fill light — cool blue from right
+const fillLight = new THREE.DirectionalLight(0xb8d0ff, 1.2);
+fillLight.position.set(2.5, 2.0, 1.5);
+scene.add(fillLight);
+
+// Rim / hair light — warm from behind
+const rimLight = new THREE.SpotLight(0xffdd99, 2.5, 12, Math.PI / 5, 0.6, 1.2);
+rimLight.position.set(0.8, 3.8, -2.8);
+scene.add(rimLight);
+scene.add(rimLight.target);
+rimLight.target.position.set(0, 1.4, 0);
+
+// Under bounce
+const bounceLight = new THREE.DirectionalLight(0xfff0d0, 0.4);
+bounceLight.position.set(0, -1, 1.5);
+scene.add(bounceLight);
+
+// Ground plane — subtle reflective floor
+const ground = new THREE.Mesh(
+  new THREE.CircleGeometry(3, 64),
+  new THREE.MeshStandardMaterial({ color: 0x181820, roughness: 0.6, metalness: 0.15 })
+);
+ground.rotation.x = -Math.PI / 2;
+ground.receiveShadow = true;
+scene.add(ground);
+
+// SSS skin material factory
+function makeSkinMaterial(baseMat) {
+  const skinNames = ['body','legs','arms','head','torso','skin','face','hand','foot'];
+  const name = (baseMat.name || '').toLowerCase();
+  const isSkin = skinNames.some(n => name.includes(n));
+  const isEye  = name.includes('eye') || name.includes('cornea') || name.includes('iris');
+  const isMouth= name.includes('mouth') || name.includes('teeth') || name.includes('tongue');
+  const isNail = name.includes('nail');
+
+  if (isEye) {
+    return new THREE.MeshPhysicalMaterial({
+      color: baseMat.color || new THREE.Color(0.6, 0.5, 0.4),
+      map: baseMat.map || null,
+      roughness: 0.05, metalness: 0.0,
+      transmission: 0.0, ior: 1.45,
+      clearcoat: 1.0, clearcoatRoughness: 0.05,
+    });
+  }
+
+  if (isNail) {
+    return new THREE.MeshPhysicalMaterial({
+      color: baseMat.color || new THREE.Color(0.85, 0.75, 0.72),
+      map: baseMat.map || null,
+      roughness: 0.15, metalness: 0.0,
+      clearcoat: 0.8, clearcoatRoughness: 0.1,
+    });
+  }
+
+  if (isSkin || (!isEye && !isMouth && !isNail)) {
+    return new THREE.MeshPhysicalMaterial({
+      color: baseMat.color || new THREE.Color(0.96, 0.88, 0.80),
+      map: baseMat.map || null,
+      normalMap: baseMat.normalMap || null,
+      roughnessMap: baseMat.roughnessMap || null,
+      roughness: 0.68,
+      metalness: 0.0,
+      sheen: 0.25,
+      sheenRoughness: 0.6,
+      sheenColor: new THREE.Color(0.9, 0.5, 0.4),
+      // Subsurface approximation via transmission+thickness trick
+      specularIntensity: 0.35,
+      specularColor: new THREE.Color(1.0, 0.92, 0.88),
+    });
+  }
+
+  return baseMat;
+}
+
+// Morph target index map
+const MORPH_MAP = {
+  heightPos: 0,
+  heightNeg: 1,
+  lashOuter: 2,
+  lashUpper: 3,
+  lashLower: 4,
+  noseWR:    5,
+  noseWL:    6,
+  eyeR:      7,
+  eyeL:      8,
+  lidR:      9,
+  lidL:      10,
+  earR:      11,
+  earL:      12,
+  browR:     13,
+  browL:     14,
+  height:    15,
+  feminine:  16,
+};
+
+let avatar = null;
+let meshes = [];
+let autoRotate = true;
+let wireframe = false;
+
+// Load GLB
+const loader = new GLTFLoader();
+const progress = document.getElementById('progress');
+const loadingText = document.getElementById('loading-text');
+
+loader.load(
+  'web_amala.glb',
+  (gltf) => {
+    avatar = gltf.scene;
+    avatar.traverse(obj => {
+      if (obj.isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+        if (Array.isArray(obj.material)) {
+          obj.material = obj.material.map(m => makeSkinMaterial(m));
+        } else if (obj.material) {
+          obj.material = makeSkinMaterial(obj.material);
+        }
+        meshes.push(obj);
+        if (obj.morphTargetInfluences) {
+          obj.morphTargetInfluences.fill(0);
+        }
+      }
+    });
+
+    // Auto-fit
+    const box = new THREE.Box3().setFromObject(avatar);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const scaleF = 1.8 / size.y;
+    avatar.scale.setScalar(scaleF);
+    avatar.position.set(-center.x * scaleF, -box.min.y * scaleF, -center.z * scaleF);
+
+    scene.add(avatar);
+    document.getElementById('loading-screen').style.display = 'none';
+
+    // Apply the initially selected skin preset so model matches the UI
+    const initialCard = document.querySelector('.skin-card.active');
+    if (initialCard) setSkinPreset(initialCard);
+  },
+  (xhr) => {
+    const pct = Math.round(xhr.loaded / xhr.total * 100);
+    progress.style.width = pct + '%';
+    loadingText.textContent = `Cargando modelo... ${pct}%`;
+  },
+  (err) => {
+    loadingText.textContent = 'Error al cargar el modelo.';
+    console.error(err);
+  }
+);
+
+// Resize
+function resize() {
+  const vp = document.getElementById('viewport');
+  const w = vp.clientWidth, h = vp.clientHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+}
+resize();
+new ResizeObserver(resize).observe(document.getElementById('viewport'));
+
+// Animate
+let rotY = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  if (autoRotate && avatar) {
+    rotY += 0.003;
+    avatar.rotation.y = rotY;
+  }
+  controls.update();
+  renderer.render(scene, camera);
+}
+animate();
+
+// --- API exposed to global scope ---
+function setMorphOnAll(index, value) {
+  meshes.forEach(m => {
+    if (m.morphTargetInfluences && index < m.morphTargetInfluences.length) {
+      m.morphTargetInfluences[index] = Math.max(0, Math.min(1, value));
+    }
+  });
+}
+
+window.setMorph = function(key, input) {
+  const val = parseFloat(input.value);
+  const pct = Math.round(val * 100);
+  if (key === 'height') {
+    const pos = Math.max(0, val);
+    const neg = Math.max(0, -val);
+    setMorphOnAll(MORPH_MAP.heightPos, pos);
+    setMorphOnAll(MORPH_MAP.heightNeg, neg);
+    document.getElementById('lbl-height').textContent = (val >= 0 ? '+' : '') + pct + '%';
+  }
+  updateTrack(input);
+};
+
+window.setMorphDual = function(posKey, negKey, input) {
+  const val = parseFloat(input.value);
+  setMorphOnAll(MORPH_MAP[posKey], val);
+  document.getElementById('lbl-heightScale').textContent = Math.round(val * 100) + '%';
+  updateTrack(input);
+};
+
+window.setMorphSingle = function(key, input) {
+  const val = parseFloat(input.value);
+  setMorphOnAll(MORPH_MAP[key], val);
+  const lbl = document.getElementById('lbl-' + key);
+  if (lbl) lbl.textContent = Math.round(val * 100) + '%';
+  updateTrack(input);
+};
+
+window.setScale = function(axis, input) {
+  const val = parseFloat(input.value);
+  if (avatar) avatar.scale[axis] = val * (axis === 'y' ? 1.8 / 1.8 : 1) * parseFloat(document.getElementById('sl-sy').value) / parseFloat(document.getElementById('sl-sy').value);
+  if (avatar) {
+    avatar.scale.x = parseFloat(document.getElementById('sl-sx').value);
+    avatar.scale.y = parseFloat(document.getElementById('sl-sy').value);
+    avatar.scale.z = parseFloat(document.getElementById('sl-sz').value);
+  }
+  document.getElementById('lbl-s' + axis).textContent = val.toFixed(2);
+  updateTrack(input);
+};
+
+window.setSkinPreset = function(card) {
+  document.querySelectorAll('.skin-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  const col = new THREE.Color(card.dataset.color);
+  const rough = parseFloat(card.dataset.rough);
+  const sheenCol = new THREE.Color(card.dataset.sheencolor);
+
+  meshes.forEach(m => {
+    const applyTo = (mat) => {
+      const name = (mat.name || '').toLowerCase();
+      const isEye = name.includes('eye') || name.includes('cornea') || name.includes('iris');
+      const isNail = name.includes('nail');
+      const isMouth = name.includes('mouth') || name.includes('teeth') || name.includes('tongue');
+      if (!isEye && !isNail && !isMouth) {
+        mat.color.set(col);
+        mat.roughness = rough;
+        if (mat.sheenColor) mat.sheenColor.set(sheenCol);
+        mat.needsUpdate = true;
+      }
+    };
+    if (Array.isArray(m.material)) m.material.forEach(applyTo);
+    else if (m.material) applyTo(m.material);
+  });
+
+  // Adjust ambient & fill light warmth per skin tone
+  const toneIdx = parseInt(card.dataset.skin);
+  ambLight.intensity = 0.55 + (6 - toneIdx) * 0.04;
+};
+
+window.setSkinColor = window.setSkinPreset;
+
+window.setMaterial = function(prop, input) {
+  const val = parseFloat(input.value);
+  meshes.forEach(m => {
+    if (m.material) {
+      if (Array.isArray(m.material)) m.material.forEach(mat => { if (mat[prop] !== undefined) mat[prop] = val; });
+      else if (m.material[prop] !== undefined) m.material[prop] = val;
+    }
+  });
+  const key = prop === 'roughness' ? 'rough' : 'metal';
+  document.getElementById('lbl-' + key).textContent = val.toFixed(2);
+  updateTrack(input);
+};
+
+window.setAmbient = function(input) {
+  const val = parseFloat(input.value);
+  ambLight.intensity = val * 1.2;
+  document.getElementById('lbl-ambient').textContent = val.toFixed(2);
+  updateTrack(input);
+};
+
+window.setLight = function(input) {
+  const val = parseFloat(input.value);
+  keyLight.intensity = val * 5.0;
+  document.getElementById('lbl-mainlight').textContent = val.toFixed(2);
+  updateTrack(input);
+};
+
+function updateTrack(input) {
+  const min = parseFloat(input.min), max = parseFloat(input.max), val = parseFloat(input.value);
+  const pct = ((val - min) / (max - min) * 100).toFixed(1) + '%';
+  input.style.setProperty('--val', pct);
+}
+
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('panel-' + tab.dataset.panel).classList.add('active');
+  });
+});
+
+// Camera controls
+document.getElementById('btn-rotate').addEventListener('click', function() {
+  autoRotate = !autoRotate;
+  this.classList.toggle('active', autoRotate);
+  if (!autoRotate && avatar) rotY = avatar.rotation.y;
+});
+
+document.getElementById('btn-front').addEventListener('click', () => {
+  controls.target.set(0, 1.0, 0);
+  camera.position.set(0, 1.0, 2.8);
+  controls.update();
+});
+
+document.getElementById('btn-side').addEventListener('click', () => {
+  controls.target.set(0, 1.0, 0);
+  camera.position.set(2.8, 1.0, 0);
+  controls.update();
+});
+
+document.getElementById('btn-face').addEventListener('click', () => {
+  controls.target.set(0, 1.55, 0);
+  camera.position.set(0, 1.55, 0.8);
+  controls.update();
+});
+
+document.getElementById('btn-wire').addEventListener('click', function() {
+  wireframe = !wireframe;
+  this.classList.toggle('active', wireframe);
+  meshes.forEach(m => {
+    if (Array.isArray(m.material)) m.material.forEach(mat => mat.wireframe = wireframe);
+    else if (m.material) m.material.wireframe = wireframe;
+  });
+});
+
+// Stop auto-rotate on manual orbit
+controls.addEventListener('start', () => {
+  autoRotate = false;
+  document.getElementById('btn-rotate').classList.remove('active');
+});
+
+// =============================================
+// HAIR SYSTEM
+// =============================================
+let hairMesh = null;
+let hairColor = '#100500';
+let hairStyle = 'none';
+let hairParams = { length: 0.5, volume: 1.0, shine: 0.3 };
+
+function buildHairGeometry(style, params) {
+  const vol = params.volume;
+  const len = params.length;
+
+  if (style === 'none') return null;
+
+  const group = new THREE.Group();
+  const mat = new THREE.MeshPhysicalMaterial({
+    color: new THREE.Color(hairColor),
+    roughness: 1.0 - params.shine * 0.7,
+    metalness: 0.0,
+    side: THREE.DoubleSide,
+  });
+
+  // Head center ~ y=1.65 in avatar-space (before avatar scaling)
+  // We work in avatar local space — avatar is scaled to fit 1.8 units tall
+  // Head top is approximately at y=1.72, center at y=1.60
+  const headY = 1.62, headR = 0.115;
+
+  if (style === 'short') {
+    // Skull cap + short spikes
+    const capGeo = new THREE.SphereGeometry(headR * vol * 1.08, 16, 10, 0, Math.PI*2, 0, Math.PI*0.55);
+    const cap = new THREE.Mesh(capGeo, mat);
+    cap.position.set(0, headY + headR * 0.05, 0);
+    group.add(cap);
+
+    // Fringe at front
+    const fringeGeo = new THREE.TorusGeometry(headR * 0.6 * vol, headR * 0.18, 6, 14, Math.PI);
+    const fringe = new THREE.Mesh(fringeGeo, mat);
+    fringe.position.set(0, headY + headR * 0.2, headR * 0.85);
+    fringe.rotation.x = -0.3;
+    group.add(fringe);
+  }
+
+  else if (style === 'medium') {
+    const capGeo = new THREE.SphereGeometry(headR * vol * 1.09, 16, 10, 0, Math.PI*2, 0, Math.PI*0.6);
+    const cap = new THREE.Mesh(capGeo, mat);
+    cap.position.set(0, headY + headR * 0.04, 0);
+    group.add(cap);
+
+    // Sides hanging down to ears
+    const medLen = 0.12 + len * 0.1;
+    [-1, 1].forEach(side => {
+      const sideGeo = new THREE.CylinderGeometry(headR * 0.35 * vol, headR * 0.28 * vol, medLen, 8);
+      const s = new THREE.Mesh(sideGeo, mat);
+      s.position.set(side * headR * 0.85, headY - medLen * 0.3, 0);
+      group.add(s);
+    });
+    // Back piece
+    const backGeo = new THREE.CylinderGeometry(headR * 0.55 * vol, headR * 0.42 * vol, medLen * 1.1, 10);
+    const back = new THREE.Mesh(backGeo, mat);
+    back.position.set(0, headY - medLen * 0.35, -headR * 0.6);
+    group.add(back);
+  }
+
+  else if (style === 'long') {
+    const capGeo = new THREE.SphereGeometry(headR * vol * 1.09, 16, 10, 0, Math.PI*2, 0, Math.PI*0.6);
+    const cap = new THREE.Mesh(capGeo, mat);
+    cap.position.set(0, headY + headR * 0.04, 0);
+    group.add(cap);
+
+    const longLen = 0.35 + len * 0.55;
+    // Back curtain
+    const backGeo = new THREE.CylinderGeometry(headR * 0.7 * vol, headR * 0.5 * vol, longLen, 12);
+    const back = new THREE.Mesh(backGeo, mat);
+    back.position.set(0, headY - longLen * 0.45, -headR * 0.3);
+    group.add(back);
+    // Side curtains
+    [-1, 1].forEach(side => {
+      const sGeo = new THREE.CylinderGeometry(headR * 0.28 * vol, headR * 0.18 * vol, longLen * 0.85, 8);
+      const s = new THREE.Mesh(sGeo, mat);
+      s.position.set(side * headR * 0.88, headY - longLen * 0.38, headR * 0.1);
+      group.add(s);
+    });
+  }
+
+  else if (style === 'curly') {
+    const capGeo = new THREE.SphereGeometry(headR * vol * 1.12, 16, 10, 0, Math.PI*2, 0, Math.PI*0.58);
+    const cap = new THREE.Mesh(capGeo, mat);
+    cap.position.set(0, headY + headR * 0.06, 0);
+    group.add(cap);
+
+    // Curly clusters around head
+    const curlPositions = [
+      [0, 0.14, headR*1.05], [-headR*0.9, 0.05, headR*0.55],
+      [headR*0.9, 0.05, headR*0.55], [-headR*1.05, 0, -headR*0.1],
+      [headR*1.05, 0, -headR*0.1], [0, 0.05, -headR*1.05],
+      [-headR*0.6, 0.08, -headR*0.85], [headR*0.6, 0.08, -headR*0.85],
+    ];
+    curlPositions.forEach(([x, yo, z]) => {
+      const r = (0.055 + Math.random()*0.035) * vol;
+      const cGeo = new THREE.SphereGeometry(r, 8, 6);
+      const c = new THREE.Mesh(cGeo, mat);
+      c.position.set(x, headY + yo, z);
+      group.add(c);
+    });
+  }
+
+  else if (style === 'afro') {
+    const afroR = headR * (1.55 + len * 0.6) * vol;
+    const afroGeo = new THREE.SphereGeometry(afroR, 18, 14);
+    // Distort vertices for fluffy look
+    const pos = afroGeo.attributes.position;
+    for (let i = 0; i < pos.count; i++) {
+      const nx = pos.getX(i), ny = pos.getY(i), nz = pos.getZ(i);
+      const noise = 0.92 + Math.random() * 0.16;
+      pos.setXYZ(i, nx*noise, ny*noise, nz*noise);
+    }
+    afroGeo.computeVertexNormals();
+    const afro = new THREE.Mesh(afroGeo, mat);
+    afro.position.set(0, headY + headR * 0.18, 0);
+    group.add(afro);
+  }
+
+  else if (style === 'ponytail') {
+    // Cap
+    const capGeo = new THREE.SphereGeometry(headR * vol * 1.08, 16, 10, 0, Math.PI*2, 0, Math.PI*0.58);
+    group.add(Object.assign(new THREE.Mesh(capGeo, mat), { position: new THREE.Vector3(0, headY+headR*0.04, 0) }));
+    // Tail
+    const tailLen = 0.3 + len * 0.5;
+    const tailGeo = new THREE.CylinderGeometry(headR*0.18*vol, headR*0.08*vol, tailLen, 8);
+    const tail = new THREE.Mesh(tailGeo, mat);
+    tail.position.set(0, headY - tailLen*0.3, -headR*1.1);
+    tail.rotation.x = 0.5;
+    group.add(tail);
+    // Scrunchie
+    const scrGeo = new THREE.TorusGeometry(headR*0.22*vol, headR*0.1, 8, 16);
+    const scr = new THREE.Mesh(scrGeo, new THREE.MeshPhysicalMaterial({ color: 0x7c6af7, roughness:0.5 }));
+    scr.position.set(0, headY - 0.01, -headR*1.05);
+    scr.rotation.x = 1.1;
+    group.add(scr);
+  }
+
+  else if (style === 'bun') {
+    // Cap
+    const capGeo = new THREE.SphereGeometry(headR * vol * 1.08, 16, 10, 0, Math.PI*2, 0, Math.PI*0.58);
+    group.add(Object.assign(new THREE.Mesh(capGeo, mat), { position: new THREE.Vector3(0, headY+headR*0.04, 0) }));
+    // Bun ball on top
+    const bunR = (0.07 + len*0.05) * vol;
+    const bunGeo = new THREE.SphereGeometry(bunR, 12, 10);
+    const bun = new THREE.Mesh(bunGeo, mat);
+    bun.position.set(0, headY + headR + bunR*0.6, 0);
+    group.add(bun);
+  }
+
+  return group;
+}
+
+function applyHairToAvatar() {
+  // Remove existing
+  if (hairMesh) { avatar.remove(hairMesh); hairMesh = null; }
+  if (!avatar || hairStyle === 'none') return;
+
+  hairMesh = buildHairGeometry(hairStyle, hairParams);
+  if (hairMesh) avatar.add(hairMesh);
+}
+
+window.setHairStyle = function(style, card) {
+  document.querySelectorAll('#panel-hair .style-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  hairStyle = style;
+  applyHairToAvatar();
+};
+
+window.setHairColor = function(hex, swatch) {
+  document.querySelectorAll('#panel-hair .cswatch').forEach(c => c.classList.remove('active'));
+  swatch.classList.add('active');
+  hairColor = hex;
+  if (hairMesh) {
+    hairMesh.traverse(obj => {
+      if (obj.isMesh && obj.material && obj.material.color) {
+        // Only update main hair material (not scrunchie)
+        if (obj.material.color.getHexString() !== '7c6af7') {
+          obj.material.color.set(new THREE.Color(hex));
+          obj.material.needsUpdate = true;
+        }
+      }
+    });
+  }
+};
+
+window.setHairParam = function(param, input) {
+  const val = parseFloat(input.value);
+  hairParams[param] = val;
+  const labels = { length: 'lbl-hairlen', volume: 'lbl-hairvol', shine: 'lbl-hairshine' };
+  document.getElementById(labels[param]).textContent = Math.round(val * 100) + '%';
+  updateTrack(input);
+  applyHairToAvatar();
+};
+
+// =============================================
+// OUTFIT SYSTEM
+// =============================================
+let outfitTopMesh = null, outfitBottomMesh = null;
+let outfitTopStyle = 'none', outfitBottomStyle = 'none';
+let outfitTopColor = '#1a1a2e', outfitBottomColor = '#1c3a6e';
+let outfitFitness = 0.5;
+
+function buildTopGeometry(style, fitness) {
+  if (style === 'none') return null;
+  const group = new THREE.Group();
+  const slack = 0.012 + fitness * 0.018; // how much bigger than body
+  const col = new THREE.Color(outfitTopColor);
+  const mat = new THREE.MeshPhysicalMaterial({ color: col, roughness: 0.85, metalness: 0.0, side: THREE.DoubleSide });
+
+  // Avatar torso approx: chest top ~1.37, waist ~1.02, shoulder width ~0.22
+  const chestTop = 1.37, waist = 1.02;
+  const sw = 0.22 + slack; // shoulder half-width
+  const ww = 0.14 + slack; // waist half-width
+
+  if (style === 'tshirt') {
+    // Torso box (tapered cylinder)
+    const torsoH = chestTop - waist;
+    const torsoGeo = new THREE.CylinderGeometry(ww*1.05, ww, torsoH, 14);
+    const torso = new THREE.Mesh(torsoGeo, mat);
+    torso.position.set(0, waist + torsoH*0.5, 0);
+    group.add(torso);
+    // Sleeves
+    [-1,1].forEach(side => {
+      const sleeveGeo = new THREE.CylinderGeometry(0.045+slack, 0.04+slack, 0.18, 8);
+      const sleeve = new THREE.Mesh(sleeveGeo, mat);
+      sleeve.position.set(side*(sw+0.05), chestTop - 0.1, 0);
+      sleeve.rotation.z = side * 1.4;
+      group.add(sleeve);
+    });
+    // Collar ring
+    const collarGeo = new THREE.TorusGeometry(0.075, 0.02, 6, 16);
+    const collar = new THREE.Mesh(collarGeo, mat);
+    collar.position.set(0, chestTop + 0.01, 0);
+    group.add(collar);
+  }
+
+  else if (style === 'tank') {
+    const torsoH = chestTop - waist + 0.04;
+    const torsoGeo = new THREE.CylinderGeometry(ww*1.02, ww*0.96, torsoH, 14);
+    const torso = new THREE.Mesh(torsoGeo, mat);
+    torso.position.set(0, waist + torsoH*0.5, 0);
+    group.add(torso);
+    // Thin straps
+    [-1,1].forEach(side => {
+      const strapGeo = new THREE.BoxGeometry(0.04, 0.12, 0.02);
+      const strap = new THREE.Mesh(strapGeo, mat);
+      strap.position.set(side*0.09, chestTop - 0.04, 0);
+      group.add(strap);
+    });
+  }
+
+  else if (style === 'jacket') {
+    const torsoH = chestTop - waist + 0.02;
+    // Slightly bulkier
+    const jmat = mat.clone(); jmat.roughness = 0.6;
+    const torsoGeo = new THREE.CylinderGeometry(ww*1.12, ww*1.06, torsoH, 14);
+    const torso = new THREE.Mesh(torsoGeo, jmat);
+    torso.position.set(0, waist + torsoH*0.5, 0);
+    group.add(torso);
+    // Long sleeves
+    [-1,1].forEach(side => {
+      const sleeveGeo = new THREE.CylinderGeometry(0.055+slack, 0.045+slack, 0.42, 8);
+      const sleeve = new THREE.Mesh(sleeveGeo, jmat);
+      sleeve.position.set(side*(sw+0.12), chestTop - 0.22, 0);
+      sleeve.rotation.z = side * 1.35;
+      group.add(sleeve);
+    });
+    // Collar / lapels
+    const lapelGeo = new THREE.BoxGeometry(0.2, 0.14, 0.02);
+    const lapel = new THREE.Mesh(lapelGeo, jmat);
+    lapel.position.set(0, chestTop - 0.03, 0.13+slack);
+    group.add(lapel);
+  }
+
+  else if (style === 'hoodie') {
+    const torsoH = chestTop - waist + 0.02;
+    const torsoGeo = new THREE.CylinderGeometry(ww*1.15, ww*1.08, torsoH, 14);
+    const torso = new THREE.Mesh(torsoGeo, mat);
+    torso.position.set(0, waist + torsoH*0.5, 0);
+    group.add(torso);
+    [-1,1].forEach(side => {
+      const sleeveGeo = new THREE.CylinderGeometry(0.06+slack, 0.05+slack, 0.44, 8);
+      const sleeve = new THREE.Mesh(sleeveGeo, mat);
+      sleeve.position.set(side*(sw+0.14), chestTop - 0.24, 0);
+      sleeve.rotation.z = side * 1.35;
+      group.add(sleeve);
+    });
+    // Hood
+    const hoodGeo = new THREE.SphereGeometry(0.12, 12, 8, 0, Math.PI*2, 0, Math.PI*0.65);
+    const hood = new THREE.Mesh(hoodGeo, mat);
+    hood.position.set(0, chestTop + 0.06, -0.04);
+    group.add(hood);
+  }
+
+  else if (style === 'dress') {
+    // Full-length dress: top + flared skirt
+    const torsoH = chestTop - waist;
+    const torsoGeo = new THREE.CylinderGeometry(ww*1.02, ww, torsoH, 14);
+    const torso = new THREE.Mesh(torsoGeo, mat);
+    torso.position.set(0, waist + torsoH*0.5, 0);
+    group.add(torso);
+    // Flared skirt part
+    const skirtH = 0.55 + fitness * 0.1;
+    const skirtGeo = new THREE.CylinderGeometry(ww*2.2, ww*2.8, skirtH, 16);
+    const skirt = new THREE.Mesh(skirtGeo, mat);
+    skirt.position.set(0, waist - skirtH*0.5, 0);
+    group.add(skirt);
+    // Straps
+    [-1,1].forEach(side => {
+      const strapGeo = new THREE.BoxGeometry(0.05, 0.14, 0.02);
+      const strap = new THREE.Mesh(strapGeo, mat);
+      strap.position.set(side*0.1, chestTop - 0.04, 0.1);
+      group.add(strap);
+    });
+  }
+
+  return group;
+}
+
+function buildBottomGeometry(style, fitness) {
+  if (style === 'none') return null;
+  const group = new THREE.Group();
+  const slack = 0.01 + fitness * 0.018;
+  const col = new THREE.Color(outfitBottomColor);
+  const mat = new THREE.MeshPhysicalMaterial({ color: col, roughness: 0.88, metalness: 0.0, side: THREE.DoubleSide });
+
+  // Waist ~1.02, crotch ~0.82, knee ~0.45, ankle ~0.05
+  const waistY = 1.02, crotchY = 0.82, kneeY = 0.44, ankleY = 0.06;
+  const hipW = 0.16 + slack, thighW = 0.1 + slack, calfW = 0.065 + slack*0.5;
+
+  // Waistband
+  const wbGeo = new THREE.CylinderGeometry(hipW*1.08, hipW*1.05, 0.05, 14);
+  const wb = new THREE.Mesh(wbGeo, mat);
+  wb.position.set(0, waistY - 0.025, 0);
+  group.add(wb);
+
+  if (style === 'pants' || style === 'jeans' || style === 'leggings') {
+    const legMat = style === 'jeans'
+      ? new THREE.MeshPhysicalMaterial({ color: new THREE.Color(outfitBottomColor), roughness: 0.95, metalness:0, side: THREE.DoubleSide })
+      : mat;
+    const legLen = waistY - ankleY - 0.1;
+    // Hips
+    const hipGeo = new THREE.CylinderGeometry(hipW, hipW*0.95, waistY - crotchY, 12);
+    const hip = new THREE.Mesh(hipGeo, legMat);
+    hip.position.set(0, crotchY + (waistY-crotchY)*0.5, 0);
+    group.add(hip);
+    // Legs
+    [-1,1].forEach(side => {
+      const legGeo = new THREE.CylinderGeometry(thighW, style==='leggings'?calfW:thighW*0.8, legLen, 10);
+      const leg = new THREE.Mesh(legGeo, legMat);
+      leg.position.set(side*0.08, crotchY - legLen*0.5, 0);
+      group.add(leg);
+    });
+  }
+
+  else if (style === 'shorts') {
+    const shortLen = 0.22;
+    const hipGeo = new THREE.CylinderGeometry(hipW*1.05, hipW, waistY - crotchY, 12);
+    group.add(Object.assign(new THREE.Mesh(hipGeo, mat), { position: new THREE.Vector3(0, crotchY+(waistY-crotchY)*0.5, 0) }));
+    [-1,1].forEach(side => {
+      const legGeo = new THREE.CylinderGeometry(thighW*1.1, thighW, shortLen, 10);
+      const leg = new THREE.Mesh(legGeo, mat);
+      leg.position.set(side*0.08, crotchY - shortLen*0.5, 0);
+      group.add(leg);
+    });
+  }
+
+  else if (style === 'skirt') {
+    const skirtH = 0.38 + fitness * 0.08;
+    const skirtGeo = new THREE.CylinderGeometry(hipW*1.7, hipW*2.2, skirtH, 16);
+    const skirt = new THREE.Mesh(skirtGeo, mat);
+    skirt.position.set(0, waistY - 0.05 - skirtH*0.5, 0);
+    group.add(skirt);
+  }
+
+  return group;
+}
+
+function applyOutfitTop() {
+  if (outfitTopMesh) { avatar.remove(outfitTopMesh); outfitTopMesh = null; }
+  if (!avatar || outfitTopStyle === 'none') return;
+  outfitTopMesh = buildTopGeometry(outfitTopStyle, outfitFitness);
+  if (outfitTopMesh) avatar.add(outfitTopMesh);
+}
+
+function applyOutfitBottom() {
+  if (outfitBottomMesh) { avatar.remove(outfitBottomMesh); outfitBottomMesh = null; }
+  if (!avatar || outfitBottomStyle === 'none') return;
+  outfitBottomMesh = buildBottomGeometry(outfitBottomStyle, outfitFitness);
+  if (outfitBottomMesh) avatar.add(outfitBottomMesh);
+}
+
+window.setOutfitTop = function(style, card) {
+  document.querySelectorAll('#panel-outfit .section:first-child .style-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  outfitTopStyle = style;
+  applyOutfitTop();
+};
+
+window.setOutfitBottom = function(style, card) {
+  // target only bottom section cards
+  card.closest('.section').querySelectorAll('.style-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  outfitBottomStyle = style;
+  applyOutfitBottom();
+};
+
+window.setOutfitColor = function(part, hex, swatch) {
+  swatch.closest('.color-swatch-row').querySelectorAll('.cswatch').forEach(c => c.classList.remove('active'));
+  swatch.classList.add('active');
+  if (part === 'top') {
+    outfitTopColor = hex;
+    if (outfitTopMesh) outfitTopMesh.traverse(obj => {
+      if (obj.isMesh && obj.material) { obj.material.color.set(new THREE.Color(hex)); obj.material.needsUpdate = true; }
+    });
+  } else {
+    outfitBottomColor = hex;
+    if (outfitBottomMesh) outfitBottomMesh.traverse(obj => {
+      if (obj.isMesh && obj.material) { obj.material.color.set(new THREE.Color(hex)); obj.material.needsUpdate = true; }
+    });
+  }
+};
+
+window.setOutfitFit = function(input) {
+  outfitFitness = parseFloat(input.value);
+  document.getElementById('lbl-fitness').textContent = Math.round(outfitFitness*100) + '%';
+  updateTrack(input);
+  applyOutfitTop();
+  applyOutfitBottom();
+};
+</script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+{
+    "1": {
+        "inputs": {
+            "ckpt_name": "ltx-video-2b-v0.9.safetensors"
+        },
+        "class_type": "LTXVideoModelLoader"
+    },
+    "2": {
+        "inputs": {
+            "positive_prompt": "PROMPT_HERE",
+            "negative_prompt": "NEGATIVE_PROMPT_HERE",
+            "model": [
+                "1",
+                0
+            ]
+        },
+        "class_type": "LTXVideoTextEncode"
+    },
+    "3": {
+        "inputs": {
+            "width": 768,
+            "height": 512,
+            "num_frames": 121,
+            "steps": 25,
+            "cfg": 3.0,
+            "seed": 12345,
+            "model": [
+                "1",
+                0
+            ],
+            "positive": [
+                "2",
+                0
+            ],
+            "negative": [
+                "2",
+                1
+            ]
+        },
+        "class_type": "LTXVideoSampler"
+    },
+    "4": {
+        "inputs": {
+            "samples": [
+                "3",
+                0
+            ],
+            "vae": [
+                "1",
+                1
+            ]
+        },
+        "class_type": "LTXVideoDecode"
+    },
+    "5": {
+        "inputs": {
+            "images": [
+                "4",
+                0
+            ],
+            "frame_rate": 24,
+            "loop_count": 0,
+            "filename_prefix": "LTX_Video",
+            "format": "video/h264-mp4",
+            "pix_fmt": "yuv420p",
+            "crf": 17,
+            "save_output": true,
+            "pingpong": false
+        },
+        "class_type": "VHS_VideoCombine"
+    }
+}

@@ -1,0 +1,58 @@
+{
+    "1": {
+        "inputs": {
+            "model": "HunyuanVideo-bf16.safetensors"
+        },
+        "class_type": "HunyuanVideoModelLoader"
+    },
+    "2": {
+        "inputs": {
+            "prompt": "PROMPT_HERE",
+            "negative_prompt": "NEGATIVE_PROMPT_HERE"
+        },
+        "class_type": "HunyuanVideoTextEncode"
+    },
+    "3": {
+        "inputs": {
+            "width": 1280,
+            "height": 720,
+            "num_frames": 121,
+            "steps": 30,
+            "cfg": 1.0,
+            "seed": 12345,
+            "model": [
+                "1",
+                0
+            ],
+            "positive": [
+                "2",
+                0
+            ]
+        },
+        "class_type": "HunyuanVideoSampler"
+    },
+    "4": {
+        "inputs": {
+            "samples": [
+                "3",
+                0
+            ],
+            "vae": [
+                "1",
+                1
+            ]
+        },
+        "class_type": "HunyuanVideoDecode"
+    },
+    "5": {
+        "inputs": {
+            "images": [
+                "4",
+                0
+            ],
+            "frame_rate": 24,
+            "format": "video/h264-mp4"
+        },
+        "class_type": "VHS_VideoCombine"
+    }
+}

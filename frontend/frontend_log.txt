@@ -1,0 +1,62 @@
+
+> frontend@0.1.0 dev
+> next dev -p 3003
+
+Ôû▓ Next.js 16.1.6 (Turbopack)
+- Local:         http://localhost:3003
+- Network:       http://172.26.240.1:3003
+- Environments: .env.local
+
+Ô£ô Starting...
+Ô£ô Ready in 5s
+Ôùï Compiling / ...
+ GET / 200 in 8.8s (compile: 8.5s, render: 374ms)
+ GET /login 200 in 162ms (compile: 127ms, render: 35ms)
+Ô£ô Compiled in 2.8s
+Ô£ô Compiled in 1194ms
+Ôùï Compiling /pricing ...
+ GET /pricing 200 in 8.5s (compile: 7.5s, render: 995ms)
+ GET /pricing 200 in 708ms (compile: 185ms, render: 523ms)
+ GET /studio?step=avatar 200 in 1164ms (compile: 994ms, render: 170ms)
+ GET /dashboard/studio 200 in 1045ms (compile: 610ms, render: 435ms)
+ GET /dashboard/studio 200 in 339ms (compile: 52ms, render: 287ms)
+ GET /pricing 200 in 182ms (compile: 8ms, render: 174ms)
+ GET /studio?step=avatar 200 in 75ms (compile: 8ms, render: 68ms)
+ GET /dashboard/studio 200 in 178ms (compile: 11ms, render: 166ms)
+ GET /dashboard/studio 200 in 95ms (compile: 10ms, render: 85ms)
+ GET /login 200 in 895ms (compile: 311ms, render: 584ms)
+ GET / 200 in 323ms (compile: 258ms, render: 66ms)
+ GET /pricing 200 in 237ms (compile: 8ms, render: 230ms)
+ GET /login 200 in 201ms (compile: 12ms, render: 190ms)
+ GET /pricing 200 in 166ms (compile: 6ms, render: 160ms)
+Ô£ô Compiled in 1523ms
+ GET /studio 200 in 65ms (compile: 11ms, render: 54ms)
+ GET /dashboard/studio 200 in 69ms (compile: 12ms, render: 58ms)
+ GET /dashboard/studio 200 in 188ms (compile: 30ms, render: 157ms)
+ GET /pricing 200 in 1344ms (compile: 295ms, render: 1050ms)
+ GET / 200 in 1180ms (compile: 346ms, render: 834ms)
+ GET /pricing 200 in 253ms (compile: 10ms, render: 243ms)
+Ô£ô Compiled in 2s
+Ô£ô Compiled in 398ms
+Ô£ô Compiled in 917ms
+Ô£ô Compiled in 778ms
+ GET /pricing 200 in 1479ms (compile: 86ms, render: 1393ms)
+ GET /pricing 200 in 2.1s (compile: 349ms, render: 1780ms)
+ GET /pricing 200 in 2.0s (compile: 444ms, render: 1598ms)
+ GET /pricing 200 in 808ms (compile: 16ms, render: 792ms)
+ GET /pricing 200 in 1309ms (compile: 9ms, render: 1300ms)
+ GET / 200 in 2.8s (compile: 2.6s, render: 211ms)
+ GET /pricing 200 in 2.4s (compile: 14ms, render: 2.4s)
+ GET / 200 in 72ms (compile: 15ms, render: 57ms)
+ GET /login 200 in 2.7s (compile: 2.0s, render: 677ms)
+ GET /pricing 200 in 505ms (compile: 6ms, render: 499ms)
+ GET /login 200 in 201ms (compile: 6ms, render: 196ms)
+ GET / 200 in 1905ms (compile: 6ms, render: 1899ms)
+ GET /login 200 in 555ms (compile: 209ms, render: 346ms)
+ GET /register 200 in 793ms (compile: 752ms, render: 41ms)
+ GET / 200 in 295ms (compile: 83ms, render: 211ms)
+ GET /studio 307 in 394ms (compile: 69ms, render: 325ms)
+ GET /dashboard/studio 200 in 1235ms (compile: 47ms, render: 1188ms)
+ GET /dashboard/avatars/new 200 in 275ms (compile: 204ms, render: 71ms)
+ GET /dashboard/avatars/new 200 in 122ms (compile: 19ms, render: 103ms)
+ GET /dashboard/avatars/new 200 in 219ms (compile: 49ms, render: 170ms)

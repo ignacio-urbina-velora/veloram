@@ -1,0 +1,85 @@
+{
+    "1": {
+        "inputs": {
+            "model": "Wan2_2-T2V-14B_bf16.safetensors",
+            "base_precision": "bf16"
+        },
+        "class_type": "WanVideoModelLoader"
+    },
+    "2": {
+        "inputs": {
+            "model_name": "umt5-xxl-enc-fp8_e4m3fn.safetensors"
+        },
+        "class_type": "LoadWanVideoT5TextEncoder"
+    },
+    "4": {
+        "inputs": {
+            "positive_prompt": "PROMPT_HERE",
+            "negative_prompt": "NEGATIVE_PROMPT_HERE",
+            "t5": [
+                "2",
+                0
+            ]
+        },
+        "class_type": "WanVideoTextEncode"
+    },
+    "5": {
+        "inputs": {
+            "width": 1280,
+            "height": 720,
+            "num_frames": 81
+        },
+        "class_type": "WanVideoEmptyEmbeds"
+    },
+    "6": {
+        "inputs": {
+            "model": [
+                "1",
+                0
+            ],
+            "image_embeds": [
+                "5",
+                0
+            ],
+            "text_embeds": [
+                "4",
+                0
+            ],
+            "steps": 40,
+            "cfg": 6.0,
+            "seed": 123
+        },
+        "class_type": "WanVideoSampler"
+    },
+    "7": {
+        "inputs": {
+            "model_name": "Wan2_2_VAE_bf16.safetensors"
+        },
+        "class_type": "WanVideoVAELoader"
+    },
+    "8": {
+        "inputs": {
+            "vae": [
+                "7",
+                0
+            ],
+            "samples": [
+                "6",
+                0
+            ],
+            "enable_vae_tiling": true
+        },
+        "class_type": "WanVideoDecode"
+    },
+    "9": {
+        "inputs": {
+            "images": [
+                "8",
+                0
+            ],
+            "frame_rate": 24,
+            "format": "video/h264-mp4"
+        },
+        "class_type": "VHS_VideoCombine"
+    }
+}

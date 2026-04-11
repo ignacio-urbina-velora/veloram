@@ -1,0 +1,1 @@
+import modal; from modal_app import AvatarGenerator; app = modal.App("tester"); @app.local_entrypoint() \ndef main(): \n  gen = AvatarGenerator(); \n  print("Running..."); \n  gen.generate.remote(prompt="test", init_image_b64=None); \n  print("Done")
